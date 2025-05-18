@@ -10,6 +10,7 @@ import android.graphics.SurfaceTexture;
 import android.hardware.camera2.*;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -41,8 +42,10 @@ public class MainActivity extends AppCompatActivity {
     private YOLOModel yoloModel;
     private YOLODetector yoloDetector;
 
-    private Handler handler = new Handler();
-    private Runnable detectionRunnable;
+    private HandlerThread yoloThread;
+    private Handler yoloHandler;
+    private Handler mainHandler;
+
     private boolean isDetecting = false;
 
     @Override
@@ -79,8 +82,15 @@ public class MainActivity extends AppCompatActivity {
         }
         layoutStart.setVisibility(View.GONE);
         layoutDetect.setVisibility(View.VISIBLE);
+        initThreads();
         startCameraStream();
-        loadModel();
+    }
+
+    void initThreads() {
+        yoloThread = new HandlerThread("YoloThread");
+        yoloThread.start();
+        yoloHandler = new Handler(yoloThread.getLooper());
+        mainHandler = new Handler(getMainLooper());
     }
 
     void startCameraStream() {
@@ -112,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onOpened(@NonNull CameraDevice camera) {
                     cameraDevice = camera;
                     createCameraPreviewSession();
+                    loadModel();
                 }
 
                 @Override public void onDisconnected(@NonNull CameraDevice camera) {
@@ -123,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                     camera.close();
                     cameraDevice = null;
                 }
-            }, null);
+            }, mainHandler);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -148,22 +159,22 @@ public class MainActivity extends AppCompatActivity {
                     cameraCaptureSession = session;
                     try {
                         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
-                        cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, null);
+                        cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, mainHandler);
                     } catch (CameraAccessException e) {
                         e.printStackTrace();
                     }
                 }
 
                 @Override public void onConfigureFailed(@NonNull CameraCaptureSession session) {}
-            }, null);
+            }, mainHandler);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     void loadModel() {
-        yoloModel = new YOLOModel(this, Constants.MODEL_PATH, Constants.CLASSES_PATH);
-        yoloDetector = new YOLODetector(yoloModel);
+        if (yoloModel == null) yoloModel = new YOLOModel(this, Constants.MODEL_PATH, Constants.CLASSES_PATH);
+        if (yoloDetector == null) yoloDetector = new YOLODetector(yoloModel);
 
         Snackbar.make(findViewById(R.id.button_start), "Model loaded", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
@@ -173,32 +184,24 @@ public class MainActivity extends AppCompatActivity {
 
     void startRealtimeDetection() {
         isDetecting = true;
-        detectionRunnable = new Runnable() {
+        yoloHandler.post(new Runnable() {
             @Override
             public void run() {
                 if (!isDetecting) return;
-                Bitmap frame = textureViewCamera.getBitmap();
-                if (frame != null) {
-                    detectObjects(frame);
+                Bitmap frame = textureViewCamera.getBitmap(320, 320);
+                if (frame != null && yoloDetector != null) {
+                    List<YOLODetection> detections = yoloDetector.detectObjects(frame);
+                    Bitmap outputImage = drawBoundingBox(frame, detections);
+                    mainHandler.post(() -> drawDetectionBitmap(outputImage));
                 }
-                handler.postDelayed(this, 0); // lặp mỗi 500ms
+                yoloHandler.postDelayed(this, 100); // ~10 FPS
             }
-        };
-        handler.post(detectionRunnable);
+        });
     }
 
     void stopRealtimeDetection() {
         isDetecting = false;
-        handler.removeCallbacks(detectionRunnable);
-    }
-
-    void detectObjects(Bitmap image) {
-        if (image == null) return;
-
-        List<YOLODetection> detections = yoloDetector.detectObjects(image);
-        Bitmap outputImage = drawBoundingBox(image, detections);
-
-        runOnUiThread(() -> drawDetectionBitmap(outputImage));
+        yoloHandler.removeCallbacksAndMessages(null);
     }
 
     public Bitmap drawBoundingBox(Bitmap bitmap, List<YOLODetection> detections) {
@@ -219,12 +222,12 @@ public class MainActivity extends AppCompatActivity {
             float right = x + width / 2;
             float bottom = y + height / 2;
 
-            paint.setStrokeWidth(10);
+            paint.setStrokeWidth(8);
             canvas.drawRect(new RectF(left, top, right, bottom), paint);
 
             String label = detection.className + " (" + String.format("%.2f", detection.confidence * 100) + "%)";
             paint.setStrokeWidth(2);
-            paint.setTextSize(20);
+            paint.setTextSize(28);
             canvas.drawText(label, left, top - 10, paint);
         }
 
@@ -240,8 +243,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void drawDetectionBitmap(Bitmap bitmap) {
-        textureViewCamera.setVisibility(View.INVISIBLE);
         imageViewDetection.setVisibility(View.VISIBLE);
         imageViewDetection.setImageBitmap(bitmap);
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopRealtimeDetection();
+        if (cameraDevice != null) {
+            cameraDevice.close();
+            cameraDevice = null;
+        }
+        if (yoloThread != null) {
+            yoloThread.quitSafely();
+        }
+        super.onDestroy();
     }
 }
