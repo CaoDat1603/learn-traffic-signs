@@ -3,14 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:id="@+id/main"
+    android:background="@color/white"
+    tools:context=".view.ScanSignActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:title="YOLO11S TFLite"
-        android:layout_alignParentTop="true" />
+        android:background="@drawable/top_bar"
+        android:layout_alignParentTop="true">
+
+        <LinearLayout
+            android:id="@+id/turnBack"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="20dp"
+                android:background="@drawable/arrow_left">
+            </ImageView>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TRA CỨU BIỂN BÁO"
+            android:textColor="@color/white"
+            android:textSize="20dp"/>
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <LinearLayout
         android:id="@+id/linearLayout_start"
@@ -18,17 +40,26 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:gravity="center"
         android:orientation="vertical">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Click start to continue" />
-        <Button
+            android:textSize="14dp"
+            android:textColor="@color/blue"
+            android:layout_marginBottom="10dp"
+            android:text="Nhấn để bắt đầu" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Start" />
+            android:layout_width="150dp"
+            android:layout_height="45dp"
+            app:backgroundTint="@null"
+            android:background="@drawable/button_backroud"
+            android:text="Bắt đầu"
+            android:textSize="16dp"
+            android:textColor="@color/white"/>
     </LinearLayout>
 
     <RelativeLayout
@@ -41,24 +72,14 @@
             android:id="@+id/textureView_camera"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/button_detect"
             android:layout_centerHorizontal="true"
             />
         <ImageView
             android:id="@+id/imageView_detection"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/button_detect"
             android:layout_centerHorizontal="true"
-            android:visibility="gone"
+            android:visibility="invisible"
             />
-        <Button
-            android:id="@+id/button_detect"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="10dp"
-            android:text="Detect" />
     </RelativeLayout>
 </RelativeLayout>

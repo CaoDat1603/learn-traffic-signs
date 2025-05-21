@@ -1,9 +1,11 @@
-package com.example.myapplication;
+package com.example.myapplication.view.custom;
 
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.example.myapplication.data.model.YOLODetection;
 
 import java.util.ArrayList;
 import java.util.List;

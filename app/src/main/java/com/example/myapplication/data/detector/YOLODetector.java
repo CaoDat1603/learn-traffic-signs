@@ -1,5 +1,9 @@
-package com.example.myapplication;
+package com.example.myapplication.data.detector;
 import android.graphics.Bitmap;
+
+import com.example.myapplication.data.model.YOLODetection;
+import com.example.myapplication.data.model.YOLOModel;
+
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.support.common.ops.CastOp;
 import org.tensorflow.lite.support.common.ops.NormalizeOp;

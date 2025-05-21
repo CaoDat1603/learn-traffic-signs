@@ -1,5 +1,7 @@
-package com.example.myapplication;
+package com.example.myapplication.view;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -22,16 +24,28 @@ import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
+import com.example.myapplication.R;
+import com.example.myapplication.data.common.Constants;
+import com.example.myapplication.data.detector.YOLODetector;
+import com.example.myapplication.data.model.YOLODetection;
+import com.example.myapplication.data.model.YOLOModel;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class ScanSignActivity extends AppCompatActivity {
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
 
-    private LinearLayout layoutStart;
+    private LinearLayout layoutStart, turnBack;
     private Button buttonStart;
     private RelativeLayout layoutDetect;
     private TextureView textureViewCamera;
@@ -46,20 +60,30 @@ public class MainActivity extends AppCompatActivity {
     private Handler yoloHandler;
     private Handler mainHandler;
 
+    private ArrayList<String> classNames;
+
     private boolean isDetecting = false;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_scan_sign);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         layoutStart = findViewById(R.id.linearLayout_start);
         buttonStart = findViewById(R.id.button_start);
         layoutDetect = findViewById(R.id.relativeLayout_detect);
         textureViewCamera = findViewById(R.id.textureView_camera);
         imageViewDetection = findViewById(R.id.imageView_detection);
+        turnBack = findViewById(R.id.turnBack);
 
         buttonStart.setOnClickListener(v -> start());
+        turnBack.setOnClickListener(v -> finish());
     }
 
     @Override
@@ -188,20 +212,27 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (!isDetecting) return;
+
                 Bitmap frame = textureViewCamera.getBitmap(320, 320);
                 if (frame != null && yoloDetector != null) {
                     List<YOLODetection> detections = yoloDetector.detectObjects(frame);
-                    Bitmap outputImage = drawBoundingBox(frame, detections);
-                    mainHandler.post(() -> drawDetectionBitmap(outputImage));
+
+                    // Nếu phát hiện đối tượng thì xử lý và dừng luôn
+                    classNames = new ArrayList<>();
+                    if (!detections.isEmpty()) {
+                        for (YOLODetection detection : detections) {
+                            classNames.add(detection.className);
+                        }
+                        Bitmap outputImage = drawBoundingBox(frame, detections);
+                        mainHandler.post(() -> drawDetectionBitmap(outputImage));
+                        stopRealtimeDetection(); // Dừng detection
+                        closeCamera();           // Đóng camera
+                        return;
+                    }
                 }
-                yoloHandler.postDelayed(this, 100); // ~10 FPS
+                yoloHandler.postDelayed(this, 100); // Tiếp tục lặp nếu chưa phát hiện
             }
         });
-    }
-
-    void stopRealtimeDetection() {
-        isDetecting = false;
-        yoloHandler.removeCallbacksAndMessages(null);
     }
 
     public Bitmap drawBoundingBox(Bitmap bitmap, List<YOLODetection> detections) {
@@ -243,20 +274,58 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void drawDetectionBitmap(Bitmap bitmap) {
-        imageViewDetection.setVisibility(View.VISIBLE);
-        imageViewDetection.setImageBitmap(bitmap);
+        try {
+            // Lưu ảnh bounding box vào file
+            File file = new File(getCacheDir(), "detected_image.png");
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+
+            // Gửi path sang ResultActivity
+            Intent intent = new Intent(ScanSignActivity.this, ScanResultActivity.class);
+            intent.putExtra("image_path", file.getAbsolutePath());
+            intent.putStringArrayListExtra("class_names", classNames);
+            startActivity(intent);
+            finish();
+
+            // Đóng camera và detection
+            stopRealtimeDetection();
+            closeCamera();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void closeCamera() {
+        try {
+            if (cameraCaptureSession != null) {
+                cameraCaptureSession.close();
+                cameraCaptureSession = null;
+            }
+            if (cameraDevice != null) {
+                cameraDevice.close();
+                cameraDevice = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void onDestroy() {
         stopRealtimeDetection();
-        if (cameraDevice != null) {
-            cameraDevice.close();
-            cameraDevice = null;
-        }
+        closeCamera();
         if (yoloThread != null) {
             yoloThread.quitSafely();
         }
         super.onDestroy();
+    }
+
+    void stopRealtimeDetection() {
+        isDetecting = false;
+        if (yoloHandler != null) {
+            yoloHandler.removeCallbacksAndMessages(null);
+        }
     }
 }

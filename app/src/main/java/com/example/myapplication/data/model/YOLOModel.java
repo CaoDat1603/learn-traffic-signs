@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.data.model;
 import android.content.Context;
 import org.tensorflow.lite.Interpreter;
 
