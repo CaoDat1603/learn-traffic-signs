@@ -5,13 +5,25 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backgroud_main"
     tools:context=".view.ScanResultActivity">
+
+    <ImageView
+        android:id="@+id/resultImageView"
+        android:layout_width="409dp"
+        android:layout_height="199dp"
+        android:scaleType="fitCenter"
+        android:background="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        tools:layout_editor_absoluteX="0dp"
+        tools:ignore="MissingConstraints" />
+
+
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/top_bar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,17 +44,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TRA CỨU BIỂN BÁO"
+            android:text="KẾT QUẢ TRA CỨU"
+            android:textStyle="bold"
             android:textColor="@color/white"
             android:textSize="20dp"/>
     </com.google.android.material.appbar.MaterialToolbar>
-
-    <ImageView
-        android:id="@+id/resultImageView"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        android:scaleType="fitCenter"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -51,7 +57,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/pale_orange"
+        android:background="@color/white"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingBottom="16dp"
@@ -84,9 +90,9 @@
                     android:layout_marginBottom="20dp">
 
                     <ImageView
+                        android:id="@+id/imageContent"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:background="@drawable/p"
                         android:layout_marginRight="20dp"/>
 
                     <LinearLayout
@@ -160,13 +166,11 @@
 
                 <TextView
                     android:id="@+id/signDescriptionTextView"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="a) Để báo nơi cấm dừng xe và đỗ xe, phải đặt biển số P.130 Cấm dừng xe và đỗ xe.
-Biển có hiệu lực cấm các loại xe cơ giới dừng và đỗ ở phía đường có đặt biển trừ các xe được ưu tiên theo quy định. Đối với các loại xe ôtô buýt chạy theo hành trình quy định được hướng dẫn vị trí dừng thích hợp.
-\n\nb) Hiệu lực cấm của biển bắt đầu từ vị trí đặt biển đến nơi đường giao nhau hoặc đến vị trí quy định đỗ xe, dừng xe (hoặc đến vị trí đặt biển số P.135 (Hết tất cả các lệnh cấm) nếu đồng thời có nhiều biển cấm khác hết tác dụng). Nếu cần thể hiện đặc biệt thì vị trí bắt đầu cấm phải dùng biển số S.503d và vị trí kết thúc, dùng biển số S.503f (Hướng tác dụng của biển) đặt bên dưới biển chính.\n\nc) Trong trường hợp chỉ cấm dừng, đỗ xe vào giờ nhất định thì dùng biển số S.508 (a, b).\n\nd) Trong phạm vi có hiệu lực của biển, nếu có chỗ mở dải phân cách cho phép xe quay đầu thì cần đặt thêm biển số P.130 nhắc lại."
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:justificationMode="inter_word"
                     android:textColor="@color/blue"
-                    android:textSize="15dp"
-                    android:justificationMode="inter_word"/>
+                    android:textSize="15dp" />
 
                 <TextView
                     android:id="@+id/viewFineDetailsTextView"
@@ -180,9 +184,55 @@ Biển có hiệu lực cấm các loại xe cơ giới dừng và đỗ ở ph�
                     android:layout_marginTop="8dp"
                     android:padding="8dp"
                     android:clickable="true"
-                    android:focusable="true"/>
+                    android:focusable="true"
+                    android:visibility="gone"/>
 
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nav_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.922"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.312"
+        android:layout_marginTop="290dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/backSign"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/circle_background_blue"
+            android:layout_marginRight="10dp"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="20dp"
+                android:background="@drawable/arrow_left_black"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nextSign"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/circle_background_blue"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="20dp"
+                android:background="@drawable/arrow_right_black"/>
+        </LinearLayout>
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

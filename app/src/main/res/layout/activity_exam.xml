@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/backgroud_main"
+    android:padding="12dp">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="MissingConstraints">
+
+        <LinearLayout
+            android:id="@+id/turnBack"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="20dp"
+                android:background="@drawable/arrow_left">
+            </ImageView>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="KIỂM TRA"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="20dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_end"
+            android:layout_width="120dp"
+            android:layout_height="45dp"
+            android:background="@drawable/button_backroud_red"
+            android:layout_marginLeft="110dp"
+            android:text="NỘP BÀI"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="16dp"
+            app:backgroundTint="@null" />
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <!-- Thanh chọn câu hỏi -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/question_tab_recycler"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:paddingBottom="12dp"
+        android:scrollbars="horizontal" />
+
+    <!-- Tiêu đề câu hỏi -->
+    <TextView
+        android:id="@+id/question_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CÂU HỎI 1:"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingBottom="8dp" />
+
+    <!-- Hình ảnh câu hỏi -->
+    <ImageView
+        android:id="@+id/question_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_launcher_background"
+        android:contentDescription="Ảnh câu hỏi"
+        android:paddingBottom="8dp" />
+
+    <!-- Các lựa chọn -->
+    <RadioGroup
+        android:id="@+id/answer_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/answer1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="1. ..." />
+
+        <RadioButton
+            android:id="@+id/answer2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="2. ..." />
+
+        <RadioButton
+            android:id="@+id/answer3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="3. ..." />
+
+        <RadioButton
+            android:id="@+id/answer4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="4. ..." />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:padding="10dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_next"
+            android:layout_width="150dp"
+            android:layout_height="45dp"
+            android:background="@drawable/button_backroud"
+            android:text="Xác nhận"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            app:backgroundTint="@null" />
+    </LinearLayout>
+
+
+</LinearLayout>

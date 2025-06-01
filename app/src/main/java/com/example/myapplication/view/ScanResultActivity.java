@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,13 +16,25 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.R;
-import com.google.android.material.appbar.MaterialToolbar;
+import com.example.myapplication.data.model.TrafficSign;
+import com.example.myapplication.controller.ScanResultController;
 
 import java.util.ArrayList;
 
-import kotlin.io.LineReader;
-
 public class ScanResultActivity extends AppCompatActivity {
+    private ScanResultController controller;
+    private ArrayList<String> classNames;
+    private int currentIndex = 0;
+    private String imagePath;
+    private LinearLayout navBar;
+    private LinearLayout nextSign;
+    private LinearLayout backSign;
+    private LinearLayout turnBack;
+    private ImageView resultImageView;
+    private ImageView imageSign;
+    private TextView codeSign;
+    private TextView description;
+    private TextView nameSign;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +47,21 @@ public class ScanResultActivity extends AppCompatActivity {
             return insets;
         });
 
-        ImageView resultImageView = findViewById(R.id.resultImageView);
-        TextView codeSign = findViewById(R.id.signCodeTextView);
-        TextView nameSign = findViewById(R.id.signNameTextView);
-        TextView description = findViewById(R.id.signDescriptionTextView);
+        controller = new ScanResultController(this);
+        classNames = getIntent().getStringArrayListExtra("class_names");
+        imagePath = getIntent().getStringExtra("image_path");
 
-        LinearLayout turnBack = findViewById(R.id.turnBack);
+        resultImageView = findViewById(R.id.resultImageView);
+        codeSign = findViewById(R.id.signCodeTextView);
+        imageSign = findViewById(R.id.imageContent);
+        nameSign = findViewById(R.id.signNameTextView);
+        description = findViewById(R.id.signDescriptionTextView);
+
+        navBar = findViewById(R.id.nav_bar);
+        nextSign = findViewById(R.id.nextSign);
+        backSign = findViewById(R.id.backSign);
+
+        turnBack = findViewById(R.id.turnBack);
 
         turnBack.setOnClickListener(v -> {
             Intent intent = new Intent(ScanResultActivity.this, ScanSignActivity.class);
@@ -47,18 +69,45 @@ public class ScanResultActivity extends AppCompatActivity {
             finish();
         });
 
-        ArrayList<String> classNames = getIntent().getStringArrayListExtra("class_names");
-
-        // Nhận path ảnh từ intent
-        String imagePath = getIntent().getStringExtra("image_path");
         if (imagePath != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
             resultImageView.setImageBitmap(bitmap);
         }
 
+        if (classNames != null && classNames.size() > 1) {
+            navBar.setVisibility(View.VISIBLE);
+            nextSign.setVisibility(View.VISIBLE);
+            backSign.setVisibility(View.VISIBLE);
+        }
+
         if (classNames != null && !classNames.isEmpty()) {
-            String title = android.text.TextUtils.join(", ", classNames);
-            codeSign.setText(title);
+            String idCur = classNames.get(currentIndex);
+            displaySignInfo(idCur);
+        }
+
+        nextSign.setOnClickListener(v -> {
+            if (classNames != null && currentIndex < classNames.size() - 1) {
+                currentIndex++;
+                displaySignInfo(classNames.get(currentIndex));
+            }
+        });
+
+        backSign.setOnClickListener(v -> {
+            if (classNames != null && currentIndex > 0) {
+                currentIndex--;
+                displaySignInfo(classNames.get(currentIndex));
+            }
+        });
+    }
+    private void displaySignInfo(String id) {
+        TrafficSign sign = controller.getTrafficSignById(id);
+        if (sign != null) {
+            codeSign.setText(sign.getId());
+            nameSign.setText(sign.getName());
+            description.setText(sign.getDescription());
+
+            imageSign.setImageResource(getResources().getIdentifier(
+                    sign.getImage(), "drawable", getPackageName()));
         }
     }
 }

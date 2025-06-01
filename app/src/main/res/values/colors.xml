@@ -7,4 +7,8 @@
     <color name="jade_green">#2D99AE</color>
     <color name="midnight_blue">#0C5776</color>
     <color name="pale_orange">#F8DAD0</color>
+    <color name="yelow">#FFF959</color>
+    <color name="aqua_blue">#00B4FF</color>
+    <color name="red">#FF0000</color>
+    <color name="semi_transparent_black">#1A000000</color>
 </resources>

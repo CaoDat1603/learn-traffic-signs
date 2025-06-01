@@ -19,12 +19,9 @@ public class YOLOModel {
 
     public YOLOModel(Context context, String modelPath, String classesPath) {
         try {
-            // Load the model
             interpreter = new Interpreter(loadModelFile(context, modelPath));
-            // Get the input & output shape
             inputShape = interpreter.getInputTensor(0).shape();
             outputShape = interpreter.getOutputTensor(0).shape();
-            // Load the classes
             if (classesPath != null) loadClasses(context, classesPath);
         } catch (Exception e) {
             e.printStackTrace();

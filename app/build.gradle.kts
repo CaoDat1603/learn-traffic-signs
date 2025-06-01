@@ -46,4 +46,5 @@ dependencies {
     implementation("org.tensorflow:tensorflow-lite:2.9.0")
     implementation("org.tensorflow:tensorflow-lite-task-vision:0.3.1")
     implementation("org.tensorflow:tensorflow-lite-gpu:2.9.0")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

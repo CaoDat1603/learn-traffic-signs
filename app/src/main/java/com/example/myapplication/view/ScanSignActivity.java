@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -40,7 +41,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ScanSignActivity extends AppCompatActivity {
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
@@ -68,6 +71,7 @@ public class ScanSignActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_scan_sign);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -218,11 +222,13 @@ public class ScanSignActivity extends AppCompatActivity {
                     List<YOLODetection> detections = yoloDetector.detectObjects(frame);
 
                     // Nếu phát hiện đối tượng thì xử lý và dừng luôn
-                    classNames = new ArrayList<>();
+                    Set<String> uniqueClassNames = new HashSet<>();
                     if (!detections.isEmpty()) {
                         for (YOLODetection detection : detections) {
-                            classNames.add(detection.className);
+                            uniqueClassNames.add(detection.className.trim());
                         }
+                        classNames = new ArrayList<>(uniqueClassNames);
+
                         Bitmap outputImage = drawBoundingBox(frame, detections);
                         mainHandler.post(() -> drawDetectionBitmap(outputImage));
                         stopRealtimeDetection(); // Dừng detection

@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_home"
+        android:title="Trang chủ" />
+
+    <item
+        android:id="@+id/navigation_scan"
+        android:icon="@drawable/scan_at"
+        android:title="Tra cứu biển báo" />
+
+    <item
+        android:id="@+id/about"
+        android:icon="@drawable/about"
+        android:title="Tài khoản" />
+</menu>
