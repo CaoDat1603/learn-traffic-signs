@@ -377,7 +377,7 @@
             "status": "not_started"
         },
         {
-            "id": "P.133",
+            "id": "DP.133",
             "name": "Hết cấm vượt",
             "description": "Biển báo này biểu thị hết đoạn đường cấm vượt. Đặt sau biển cấm vượt (P.125) hoặc biển cấm ô tô tải vượt (P.126) để báo hiệu cho người tham gia giao thông biết đoạn cấm vượt đã hết.",
             "image": "p133",
@@ -385,7 +385,7 @@
             "status": "not_started"
         },
         {
-            "id": "P.134",
+            "id": "DP.134",
             "name": "Hết hạn chế tốc độ tối đa",
             "description": "Biển báo này biểu thị hết đoạn đường hạn chế tốc độ tối đa. Đặt sau biển hạn chế tốc độ tối đa (P.127) để báo hiệu cho người tham gia giao thông biết đoạn đường hạn chế tốc độ đã hết.",
             "image": "p134",
@@ -393,7 +393,7 @@
             "status": "not_started"
         },
         {
-            "id": "P.135",
+            "id": "DP.135",
             "name": "Hết tất cả các lệnh cấm",
             "description": "Biển báo này biểu thị hết hiệu lực tất cả các lệnh cấm. Đặt sau nhóm biển cấm để báo hiệu cho người tham gia giao thông biết tất cả các biển cấm trước đó đã hết hiệu lực.",
             "image": "p135",
