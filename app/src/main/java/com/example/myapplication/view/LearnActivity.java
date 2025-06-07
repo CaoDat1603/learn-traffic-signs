@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -28,11 +29,18 @@ public class LearnActivity extends AppCompatActivity {
     private List<TrafficSign> signList;
     private List<TrafficSign> signListCur;
     private String type;
-    private int currentIndex = 0;
+    private int currentIndex = 0; // Hiện tại
+    private int curIndexNone = 0; // Tạm
+    private int curIndexNoneTow = 0; // Tạm đặt biệt (trường hợp có Đang học tiếp tục)
+    private int curIndexStart = 0; // Cố định giá trị indexInPercess lần đầu tiên khởi tạo
     private int sizeNo = 0;
+    private int sizeNoCn = 0; // Tạm đặt biệt
     private int sizeYes = 0;
+    private int sizeYesCn = 0;
     private int sizeAllSign = 0;
-    private boolean isImageVisible = true;
+    private boolean isImageVisible = true; // Hiện ảnh hay không
+    private boolean isCheckSetting = true; // Có phải là đang ở chế độ lưu tiến trình học không
+    private boolean isContinueLearn; // Có phải trường hợp tiếp tục học lại những cái đang học không
     private LinearLayout turnBack;
     private LinearLayout allContent;
     private LinearLayout imageContent;
@@ -42,7 +50,7 @@ public class LearnActivity extends AppCompatActivity {
     private LinearLayout buttonNar1;
     private LinearLayout buttonNar2;
     private ImageView imageView;
-    private ImageView backTap;
+    private LinearLayout backTap;
     private TextView indexCur;
     private TextView sizeAll;
     private TextView indexNo;
@@ -54,6 +62,7 @@ public class LearnActivity extends AppCompatActivity {
     private Button buttonYes;
     private Button buttonNext;
     private Button buttonBack;
+    private Button btnExam;
     private SwitchCompat switchSetting;
 
 
@@ -88,12 +97,23 @@ public class LearnActivity extends AppCompatActivity {
         buttonYes = findViewById(R.id.buttonYes);
         buttonNext = findViewById(R.id.buttonNext);
         buttonBack = findViewById(R.id.buttonBack);
+        btnExam = findViewById(R.id.testExam);
 
         bar = findViewById(R.id.bar2);
         space = findViewById(R.id.space1);
         buttonNar1 = findViewById(R.id.buttonNav1);
         buttonNar2 = findViewById(R.id.buttonNav2);
+
+        btnExam.setOnClickListener(v -> {
+            Intent intent = new Intent(LearnActivity.this, ExamActivity.class);
+            intent.putExtra("typeSign", type);
+            startActivity(intent);
+        });
+
         switchSetting = findViewById(R.id.switchSetting);
+
+        reloadData(false); //Khởi tạo dữ liệu ban đầu
+
         // Lấy trạng thái đã lưu (nếu có)
         SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         boolean isChecked = prefs.getBoolean("switch_state", true); // true là mặc định on
@@ -102,11 +122,18 @@ public class LearnActivity extends AppCompatActivity {
             space.setVisibility(View.VISIBLE);
             buttonNar1.setVisibility(View.GONE);
             buttonNar2.setVisibility(View.VISIBLE);
+            backTap.setVisibility(View.GONE);
+
+            isCheckSetting = false;
+            curIndexNone = currentIndex;
+            curIndexNoneTow = 1;
+            displaySignInfo(signListCur.get(curIndexNone), isContinueLearn, curIndexNone);
         } else {
             bar.setVisibility(View.VISIBLE);
             space.setVisibility(View.GONE);
             buttonNar1.setVisibility(View.VISIBLE);
             buttonNar2.setVisibility(View.GONE);
+            isCheckSetting = true;
         }
         switchSetting.setChecked(isChecked);
 
@@ -121,38 +148,69 @@ public class LearnActivity extends AppCompatActivity {
                 space.setVisibility(View.VISIBLE);
                 buttonNar1.setVisibility(View.GONE);
                 buttonNar2.setVisibility(View.VISIBLE);
+                backTap.setVisibility(View.GONE);
+
+                isCheckSetting = false;
+                curIndexNone = currentIndex;
+                curIndexNoneTow = sizeYesCn + sizeNoCn + 1;
             } else {
                 bar.setVisibility(View.VISIBLE);
                 space.setVisibility(View.GONE);
                 buttonNar1.setVisibility(View.VISIBLE);
                 buttonNar2.setVisibility(View.GONE);
+                backTap.setVisibility(View.VISIBLE);
+
+                isCheckSetting = true;
+                displaySignInfo(signListCur.get(currentIndex), isContinueLearn, currentIndex);
+                imageContent.setVisibility(View.VISIBLE);
+                scrollView.setVisibility(View.GONE);
+                isImageVisible = true;
             }
         });
-
-        reloadData(false);
 
         turnBack.setOnClickListener(v -> finish());
 
         backTap.setOnClickListener(v -> {
             if (signListCur != null && currentIndex > 0) {
-                boolean co;
-                if (controller.isHaveStudying) {
+                if (controller.isHaveStudying && currentIndex > curIndexStart) {
+                    boolean co;
+
                     co = controller.backSign(currentIndex, true);
                     sizeNo++;
-                } else {
-                    co = controller.backSign(currentIndex, false);
-                }
-                if (co) {
-                    sizeNo--;
-                } else {
-                    sizeYes--;
-                }
-                currentIndex--;
-                displaySignInfo(signListCur.get(currentIndex));
 
-                imageContent.setVisibility(View.VISIBLE);
-                scrollView.setVisibility(View.GONE);
-                isImageVisible = true;
+                    if (co) {
+                        sizeNo--;
+                        if (controller.isHaveStudying) sizeNoCn--;
+                    } else {
+                        sizeYes--;
+                        if (controller.isHaveStudying) sizeYesCn--;
+                    }
+
+                    currentIndex--;
+                    displaySignInfo(signListCur.get(currentIndex), isContinueLearn, currentIndex);
+
+                    imageContent.setVisibility(View.VISIBLE);
+                    scrollView.setVisibility(View.GONE);
+                    isImageVisible = true;
+                } else if (!controller.isHaveStudying) {
+                    boolean co;
+                    co = controller.backSign(currentIndex, false);
+
+                    if (co) {
+                        sizeNo--;
+                        if (controller.isHaveStudying) sizeNoCn--;
+                    } else {
+                        sizeYes--;
+                        if (controller.isHaveStudying) sizeYesCn--;
+                    }
+
+                    currentIndex--;
+                    displaySignInfo(signListCur.get(currentIndex), isContinueLearn, currentIndex);
+
+                    imageContent.setVisibility(View.VISIBLE);
+                    scrollView.setVisibility(View.GONE);
+                    isImageVisible = true;
+                }
             }
         });
 
@@ -172,8 +230,11 @@ public class LearnActivity extends AppCompatActivity {
                controller.noSign(currentIndex);
                currentIndex++;
                sizeNo++;
-               if (controller.isHaveStudying) sizeNo--;
-               displaySignInfo(signListCur.get(currentIndex));
+               if (controller.isHaveStudying) {
+                   sizeNo--;
+                   sizeNoCn++;
+               }
+               displaySignInfo(signListCur.get(currentIndex), isContinueLearn, currentIndex);
 
                imageContent.setVisibility(View.VISIBLE);
                scrollView.setVisibility(View.GONE);
@@ -193,9 +254,12 @@ public class LearnActivity extends AppCompatActivity {
                 controller.nextSign(currentIndex);
                 currentIndex++;
                 sizeYes++;
-                if (controller.isHaveStudying) sizeNo--;
+                if (controller.isHaveStudying) {
+                    sizeNo--;
+                    sizeYesCn++;
+                }
 
-                displaySignInfo(signListCur.get(currentIndex));
+                displaySignInfo(signListCur.get(currentIndex), isContinueLearn, currentIndex);
 
                 imageContent.setVisibility(View.VISIBLE);
                 scrollView.setVisibility(View.GONE);
@@ -211,44 +275,45 @@ public class LearnActivity extends AppCompatActivity {
         });
 
         buttonNext.setOnClickListener(v -> {
-            if (signListCur != null && currentIndex < sizeAllSign - 1) {
-                controller.nextSign(currentIndex);
-                currentIndex++;
-                sizeYes++;
-                if (controller.isHaveStudying) sizeNo--;
-                displaySignInfo(signListCur.get(currentIndex));
+            if (signListCur != null && curIndexNone < sizeAllSign - 1) {
+                curIndexNone++;
+
+                if (controller.isHaveStudying) curIndexNoneTow++;
+                displaySignInfo(signListCur.get(curIndexNone), isContinueLearn, curIndexNone);
 
                 imageContent.setVisibility(View.VISIBLE);
                 scrollView.setVisibility(View.GONE);
                 isImageVisible = true;
-            }   else if (currentIndex == sizeAllSign - 1) {
-                controller.endSign(currentIndex, true);
-                sizeYes++;
-                currentIndex = 0;
-                navigationSummary();
+            }   else if (curIndexNone == sizeAllSign - 1) {
+                btnExam.setVisibility(View.VISIBLE);
             }
         });
 
         buttonBack.setOnClickListener(v -> {
-            if (signListCur != null && currentIndex > 0) {
-                boolean co;
-                if (controller.isHaveStudying) {
-                    co = controller.backSign(currentIndex, true);
-                    sizeNo++;
-                } else {
-                    co = controller.backSign(currentIndex, false);
-                }
-                if (co) {
-                    sizeNo--;
-                } else {
-                    sizeYes--;
-                }
-                currentIndex--;
-                displaySignInfo(signListCur.get(currentIndex));
+            if (signListCur != null && curIndexNone > 0) {
+                if (!controller.isHaveStudying) {
+                    curIndexNone--;
 
-                imageContent.setVisibility(View.VISIBLE);
-                scrollView.setVisibility(View.GONE);
-                isImageVisible = true;
+                    displaySignInfo(signListCur.get(curIndexNone), isContinueLearn, curIndexNone);
+
+                    imageContent.setVisibility(View.VISIBLE);
+                    scrollView.setVisibility(View.GONE);
+                    isImageVisible = true;
+                } else if (curIndexNone > curIndexStart) {
+                    curIndexNone--;
+                    curIndexNoneTow--;
+
+
+                    displaySignInfo(signListCur.get(curIndexNone), isContinueLearn, curIndexNone);
+
+                    imageContent.setVisibility(View.VISIBLE);
+                    scrollView.setVisibility(View.GONE);
+                    isImageVisible = true;
+                }
+
+                if (curIndexNone == sizeAllSign - 2) {
+                    btnExam.setVisibility(View.GONE);
+                }
             }
         });
     }
@@ -283,20 +348,41 @@ public class LearnActivity extends AppCompatActivity {
 
         controller.setSignList(signList);
         signListCur = controller.getSignListCur(isReset);
+        isContinueLearn = controller.isHaveStudying;
         currentIndex = controller.curIndexInProcess();
+        curIndexStart = currentIndex;
         sizeYes = controller.sizeSignListIsLeaned();
         sizeNo = controller.sizeSignListIsStudying();
+        sizeNoCn = 0;
+        sizeYesCn = 0;
         sizeAllSign = signListCur.size();
 
-        sizeAll.setText(sizeAllSign + "");
+        Log.e("sizeYes", sizeYes + "");
+        Log.e("sizeNo", sizeNo + "");
+        Log.e("isContinueLearn", isContinueLearn + "");
+        if (isContinueLearn) {
+            sizeAll.setText((sizeNo + 1) + "");
+        } else {
+            sizeAll.setText(sizeAllSign + "");
+        }
 
-        displaySignInfo(signListCur.get(currentIndex));
+        displaySignInfo(signListCur.get(currentIndex), isContinueLearn, currentIndex);
     }
 
-    private void displaySignInfo(TrafficSign sign) {
-        indexNo.setText(sizeNo + "");
-        indexYes.setText(sizeYes + "");
-        indexCur.setText((currentIndex + 1) + "");
+    private void displaySignInfo(TrafficSign sign, boolean isContinueLearn, int curIndex) {
+        if (!isContinueLearn) {
+            indexNo.setText(sizeNo + "");
+            indexYes.setText(sizeYes + "");
+            indexCur.setText((curIndex + 1) + "");
+        } else {
+            indexNo.setText(sizeNoCn + "");
+            indexYes.setText(sizeYesCn + "");
+            indexCur.setText((sizeYesCn + sizeNoCn + 1) + "");
+
+            if (!isCheckSetting) {
+                indexCur.setText(curIndexNoneTow + "");
+            }
+        }
 
         if (sign != null) {
             signCodeTextView.setText(sign.getId());
@@ -314,6 +400,7 @@ public class LearnActivity extends AppCompatActivity {
         intent.putExtra("known", sizeYes);
         intent.putExtra("learning", sizeNo);
         intent.putExtra("remaining", sizeAllSign - sizeYes - sizeNo);
+        intent.putExtra("typeSign", type); // Truyền typeSign
         startActivityForResult(intent, 1001);
     }
 

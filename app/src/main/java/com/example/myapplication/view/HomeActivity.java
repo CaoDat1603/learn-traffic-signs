@@ -65,10 +65,27 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.nav_view);
         tile = findViewById(R.id.title_home);
 
-        scanItem = bottomNavigationView.getMenu().findItem(R.id.navigation_scan);
+        bottomNavigationView = findViewById(R.id.nav_view);
+
+        MenuItem scanItem = bottomNavigationView.getMenu().findItem(R.id.navigation_scan);
         if (scanItem != null) {
             scanItem.setEnabled(false);
         }
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.navigation_scan) {
+                return false; // Không chọn item này
+            }
+
+            if (item.getItemId() == R.id.navigation_home) {
+                return true;
+            } else if (item.getItemId() == R.id.about) {
+                startActivity(new Intent(this, AboutActivity.class));
+                return true;
+            }
+
+            return false; // Trường hợp không khớp ID nào
+        });
 
         // Lấy menu item "home"
         homeItem = bottomNavigationView.getMenu().findItem(R.id.navigation_home);
@@ -139,7 +156,7 @@ public class HomeActivity extends AppCompatActivity {
 
         exam.setOnClickListener(v -> {
             Intent intent = new Intent(HomeActivity.this, ExamActivity.class);
-            intent.putExtra("signList", (Serializable) signList);
+            intent.putExtra("typeSign", type);
             startActivity(intent);
         });
 
@@ -153,5 +170,13 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void finish() {
         super.finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view);
+        bottomNavigationView.setSelectedItemId(R.id.navigation_home); // 👈 chọn lại mục "Trang chủ"
     }
 }

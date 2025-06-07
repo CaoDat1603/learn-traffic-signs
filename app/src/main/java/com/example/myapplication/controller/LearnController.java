@@ -50,6 +50,7 @@ public class LearnController {
                     break;
                 case "studying":
                     signListIsStudying.add(sign);
+                    Log.e ("IP_SIGN: ", sign.getId() + "");
                     break;
                 case "not_started":
                     signListIsNotStarted.add(sign);
@@ -97,6 +98,8 @@ public class LearnController {
 
         // Trường hợp 1: Tất cả đều chưa học -> bắt đầu học từ phần tử đầu tiên
         if (sizeIsNotStarted == totalSize) {
+            Log.e("CASE_TS", "1");
+
             signList.get(0).setStatus("in_progress");
             updateTrafficSignStatus(signList.get(0).getId(), "in_progress");
             signListCur = new ArrayList<>(signList);
@@ -104,12 +107,14 @@ public class LearnController {
 
         // Trường hợp 2: Còn một số biển chưa học -> tiếp tục học bình thường
         else if (sizeIsNotStarted > 0) {
+            Log.e("CASE_TS", "2");
             signListCur = new ArrayList<>(signList);
         }
 
         // Trường hợp 3: Không còn biển nào chưa học
         else if (signInProcess == null) {
             if (sizeIsStudying == totalSize) {
+                Log.e("CASE_TS", "3");
                 // Tất cả đang ở trạng thái studying (chưa chọn biển đang học) -> bắt đầu học từ biển đầu
                 isHaveStudying = true;
                 signListIsStudying.get(0).setStatus("in_progress");
@@ -118,10 +123,12 @@ public class LearnController {
 
                 refreshSignListCur();
             } else if (sizeIsLeaned == totalSize || isReset) {
+                Log.e("", "4");
                 // Đã học hết -> reset lại để học lại từ đầu
                 signListCur = restartSignList();
                 initLearn();
             } else {
+                Log.e("CASE_TS", "5");
                 // Vẫn còn danh sách đang học -> chọn tiếp biển đầu
                 isHaveStudying = true;
                 signListIsStudying.get(0).setStatus("in_progress");
@@ -197,25 +204,23 @@ public class LearnController {
 
     public boolean backSign(int curIndex, boolean type) {
         if (signListCur.get(curIndex) == null) Log.e("ERRO", "Null");
+        boolean isStuding = "studying".equals(signListCur.get(curIndex - 1).getStatus());
         if (!type) {
-            boolean isStuding = "studying".equals(signListCur.get(curIndex - 1).getStatus());
-
+            Log.e("type2",  "true");
             updateTrafficSignStatus(signListCur.get(curIndex).getId(), "not_started");
+            Log.e("type2", dbHelper.getTrafficSignById(signListCur.get(curIndex).getId()).getStatus() + "");
             signListCur.get(curIndex).setStatus("not_started");
 
             updateTrafficSignStatus(signListCur.get(curIndex - 1).getId(), "in_progress");
             signListCur.get(curIndex - 1).setStatus("in_progress");
+        } else {
+            updateTrafficSignStatus(signListCur.get(curIndex).getId(), "studying");
+            signListCur.get(curIndex).setStatus("studying");
 
-            return isStuding;
+            updateTrafficSignStatus(signListCur.get(curIndex - 1).getId(), "in_progress");
+            signListCur.get(curIndex - 1).setStatus("in_progress");
         }
-
-        updateTrafficSignStatus(signListCur.get(curIndex).getId(), "studying");
-        signListCur.get(curIndex).setStatus("studying");
-
-        updateTrafficSignStatus(signListCur.get(curIndex - 1).getId(), "in_progress");
-        signListCur.get(curIndex - 1).setStatus("in_progress");
-
-        return false;
+        return isStuding;
     }
 
     public void endSign(int curIndex, boolean type) {

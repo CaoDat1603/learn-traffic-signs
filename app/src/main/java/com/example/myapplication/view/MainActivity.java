@@ -3,9 +3,7 @@ package com.example.myapplication.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout command;
     private LinearLayout direction;
     private LinearLayout addition;
+    private BottomNavigationView bottomNavigationView;
 
 
     @Override
@@ -51,12 +50,28 @@ public class MainActivity extends AppCompatActivity {
         direction = findViewById(R.id.direction);
         addition = findViewById(R.id.addition);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view);
+        bottomNavigationView = findViewById(R.id.nav_view);
 
         MenuItem scanItem = bottomNavigationView.getMenu().findItem(R.id.navigation_scan);
         if (scanItem != null) {
             scanItem.setEnabled(false);
         }
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.navigation_scan) {
+                return false; // Không chọn item này
+            }
+
+            if (item.getItemId() == R.id.navigation_home) {
+                return true;
+            } else if (item.getItemId() == R.id.about) {
+                startActivity(new Intent(this, AboutActivity.class));
+                return true;
+            }
+
+            return false; // Trường hợp không khớp ID nào
+        });
+
 
         scan.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ScanSignActivity.class);
@@ -98,5 +113,13 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("typeSign", "addition");
             startActivity(intent);
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view);
+        bottomNavigationView.setSelectedItemId(R.id.navigation_home); // chọn lại mục "Trang chủ"
     }
 }

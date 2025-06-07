@@ -64,13 +64,6 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/backTap"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="13.5dp"
-                android:background="@drawable/restart" />
-
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -441,6 +434,45 @@
                 app:backgroundTint="@null"/>
 
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/backTap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp"
+            android:padding="12dp"
+            android:gravity="center"
+            android:background="@drawable/boder_addition_button">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="13.5dp"
+                android:background="@drawable/restart" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/blue"
+                android:layout_marginLeft="30dp"
+                android:text="Hoàn tác lại"
+                android:textSize="24dp"/>
+        </LinearLayout>
+
+        <Button
+            android:layout_marginTop="15dp"
+            android:id="@+id/testExam"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/button_backroud_two"
+            android:text="Ôn luyện với các câu hỏi"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            app:backgroundTint="@null"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

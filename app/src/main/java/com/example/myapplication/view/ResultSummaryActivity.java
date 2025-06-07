@@ -27,6 +27,7 @@ import java.util.List;
 
 public class ResultSummaryActivity extends AppCompatActivity {
     private int percent;
+    private String type;
     private LinearLayout turnBack;
     private ImageView yesAll;
     private PieChart pieChart;
@@ -64,6 +65,7 @@ public class ResultSummaryActivity extends AppCompatActivity {
         learnAgain = findViewById(R.id.learnAgain);
         turnBack = findViewById(R.id.turnBack);
 
+        type = getIntent().getStringExtra("typeSign");
         float known = getIntent().getIntExtra("known", 0);
         float learning = getIntent().getIntExtra("learning", 0);
         float remaining = getIntent().getIntExtra("remaining", 0);
@@ -97,7 +99,9 @@ public class ResultSummaryActivity extends AppCompatActivity {
         });
 
         testExam.setOnClickListener(v -> {
-            // Xử lý khi người dùng nhấn nút "Ôn luyện với các câu hỏi"
+            Intent intent = new Intent(ResultSummaryActivity.this, ExamActivity.class);
+            intent.putExtra("typeSign", type);
+            startActivity(intent);
         });
 
         learnAgain.setOnClickListener(v -> {

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 
 public class ExamActivity extends AppCompatActivity {
+    private String type; // Loại biển báo đang kiểm tra
     private RecyclerView questionTabRecycler;
     private LinearLayout turnBack;
     private ImageView image;
@@ -49,6 +50,8 @@ public class ExamActivity extends AppCompatActivity {
 
         questionTabRecycler = findViewById(R.id.question_tab_recycler);
         turnBack = findViewById(R.id.turnBack);
+
+        type = getIntent().getStringExtra("typeSign");
 
         turnBack.setOnClickListener(v -> finish());
 

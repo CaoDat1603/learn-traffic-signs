@@ -12,5 +12,5 @@
     <item
         android:id="@+id/about"
         android:icon="@drawable/about"
-        android:title="Tài khoản" />
+        android:title="Về chúng tôi" />
 </menu>

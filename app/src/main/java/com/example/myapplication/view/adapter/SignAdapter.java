@@ -1,9 +1,6 @@
 package com.example.myapplication.view.adapter;
 
 import android.content.Context;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.data.model.TrafficSign;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 public class SignAdapter extends RecyclerView.Adapter<SignAdapter.SignViewHolder> {
