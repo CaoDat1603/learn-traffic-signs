@@ -1,11 +1,17 @@
 package com.example.myapplication.view;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -189,6 +195,10 @@ public class LearnActivity extends AppCompatActivity {
                     currentIndex--;
                     displaySignInfo(signListCur.get(currentIndex), isContinueLearn, currentIndex);
 
+                    Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in_left);
+                    allContent.setVisibility(View.VISIBLE);
+                    allContent.startAnimation(slideIn);
+
                     imageContent.setVisibility(View.VISIBLE);
                     scrollView.setVisibility(View.GONE);
                     isImageVisible = true;
@@ -207,6 +217,10 @@ public class LearnActivity extends AppCompatActivity {
                     currentIndex--;
                     displaySignInfo(signListCur.get(currentIndex), isContinueLearn, currentIndex);
 
+                    Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in_left);
+                    allContent.setVisibility(View.VISIBLE);
+                    allContent.startAnimation(slideIn);
+
                     imageContent.setVisibility(View.VISIBLE);
                     scrollView.setVisibility(View.GONE);
                     isImageVisible = true;
@@ -214,16 +228,45 @@ public class LearnActivity extends AppCompatActivity {
             }
         });
 
-        allContent.setOnClickListener(v -> {
-            if (isImageVisible) {
-                imageContent.setVisibility(View.GONE);
-                scrollView.setVisibility(View.VISIBLE);
-            } else {
-                imageContent.setVisibility(View.VISIBLE);
-                scrollView.setVisibility(View.GONE);
+
+        AnimatorSet flip = new AnimatorSet();
+
+        Animator outAnim = AnimatorInflater.loadAnimator(this, R.animator.flip_out_left);
+        Animator inAnim = AnimatorInflater.loadAnimator(this, R.animator.flip_in_left);
+
+        // Gán target là allContent
+        outAnim.setTarget(allContent);
+        inAnim.setTarget(allContent);
+
+        // Khi animation đầu kết thúc → bắt đầu animation thứ 2
+        outAnim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                inAnim.start();
             }
-            isImageVisible = !isImageVisible;
         });
+
+        float scale = getResources().getDisplayMetrics().density;
+        allContent.setCameraDistance(8000 * scale);
+
+        allContent.setOnClickListener(v -> {
+            outAnim.start();
+
+            allContent.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (isImageVisible) {
+                        imageContent.setVisibility(View.GONE);
+                        scrollView.setVisibility(View.VISIBLE);
+                    } else {
+                        imageContent.setVisibility(View.VISIBLE);
+                        scrollView.setVisibility(View.GONE);
+                    }
+                    isImageVisible = !isImageVisible;
+                }
+            }, 150);
+        });
+
 
         buttonNo.setOnClickListener(v -> {
            if (signListCur != null && currentIndex < sizeAllSign - 1) {
@@ -235,6 +278,10 @@ public class LearnActivity extends AppCompatActivity {
                    sizeNoCn++;
                }
                displaySignInfo(signListCur.get(currentIndex), isContinueLearn, currentIndex);
+
+               Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
+               allContent.setVisibility(View.VISIBLE);
+               allContent.startAnimation(slideIn);
 
                imageContent.setVisibility(View.VISIBLE);
                scrollView.setVisibility(View.GONE);
@@ -261,6 +308,10 @@ public class LearnActivity extends AppCompatActivity {
 
                 displaySignInfo(signListCur.get(currentIndex), isContinueLearn, currentIndex);
 
+                Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
+                allContent.setVisibility(View.VISIBLE);
+                allContent.startAnimation(slideIn);
+
                 imageContent.setVisibility(View.VISIBLE);
                 scrollView.setVisibility(View.GONE);
                 isImageVisible = true;
@@ -281,6 +332,10 @@ public class LearnActivity extends AppCompatActivity {
                 if (controller.isHaveStudying) curIndexNoneTow++;
                 displaySignInfo(signListCur.get(curIndexNone), isContinueLearn, curIndexNone);
 
+                Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
+                allContent.setVisibility(View.VISIBLE);
+                allContent.startAnimation(slideIn);
+
                 imageContent.setVisibility(View.VISIBLE);
                 scrollView.setVisibility(View.GONE);
                 isImageVisible = true;
@@ -296,6 +351,10 @@ public class LearnActivity extends AppCompatActivity {
 
                     displaySignInfo(signListCur.get(curIndexNone), isContinueLearn, curIndexNone);
 
+                    Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in_left);
+                    allContent.setVisibility(View.VISIBLE);
+                    allContent.startAnimation(slideIn);
+
                     imageContent.setVisibility(View.VISIBLE);
                     scrollView.setVisibility(View.GONE);
                     isImageVisible = true;
@@ -303,8 +362,11 @@ public class LearnActivity extends AppCompatActivity {
                     curIndexNone--;
                     curIndexNoneTow--;
 
-
                     displaySignInfo(signListCur.get(curIndexNone), isContinueLearn, curIndexNone);
+
+                    Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in_left);
+                    allContent.setVisibility(View.VISIBLE);
+                    allContent.startAnimation(slideIn);
 
                     imageContent.setVisibility(View.VISIBLE);
                     scrollView.setVisibility(View.GONE);

@@ -259,7 +259,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="52dp"
+            android:layout_marginBottom="35dp"
             android:src="@drawable/scan_at"
             app:fabSize="normal"
             app:itemTextColor="@color/blue"
