@@ -27,9 +27,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
+    // Controller xử lý logic và dữ liệu
     private HomeController controller;
+    // Biến truyền loại biển báo (VD: "prohibition", "danger", ...)
     private String type;
+    // Danh sách biển báo sau khi lọc
     private List<TrafficSign> signList;
+    // Giao diện
     private FloatingActionButton scan;
     private RecyclerView recyclerView;
     private LinearLayout turnback;
@@ -51,6 +55,7 @@ public class HomeActivity extends AppCompatActivity {
             return insets;
         });
 
+        // Khởi tạo controller và danh sách rỗng
         controller = new HomeController(this);
         signList = Collections.emptyList();
 
@@ -67,11 +72,13 @@ public class HomeActivity extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.nav_view);
 
+        // Vô hiệu hóa nút quét ở thanh điều hướng dưới
         MenuItem scanItem = bottomNavigationView.getMenu().findItem(R.id.navigation_scan);
         if (scanItem != null) {
             scanItem.setEnabled(false);
         }
 
+        // Xử lý sự kiện điều hướng trong thanh bottom navigation
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.navigation_scan) {
                 return false; // Không chọn item này
@@ -90,8 +97,10 @@ public class HomeActivity extends AppCompatActivity {
         // Lấy menu item "home"
         homeItem = bottomNavigationView.getMenu().findItem(R.id.navigation_home);
 
+        // Nhận loại biển báo từ MainActivity
         type = getIntent().getStringExtra("typeSign");
 
+        // Hiển thị tiêu đề và tải dữ liệu tương ứng
         switch (type) {
             case "all":
                 tile.setText("BIỂN BÁO NGẪU NHIÊN");
@@ -137,6 +146,7 @@ public class HomeActivity extends AppCompatActivity {
                 break;
         }
 
+        // Cài đặt adapter để hiển thị danh sách biển báo trong RecyclerView
         SignAdapter adapter = new SignAdapter(this, signList, new SignAdapter.OnSignClickListener() {
             @Override
             public void onSignClick(TrafficSign sign) {

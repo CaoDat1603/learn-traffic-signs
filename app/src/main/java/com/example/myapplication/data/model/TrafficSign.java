@@ -81,7 +81,7 @@ public class TrafficSign implements Serializable{
         TERM_TO_DEFINITION, // Tên -> Định nghĩa
         IMAGE_TO_TERM,      // Hình ảnh -> Tên
         TERM_TO_IMAGE,      // Tên -> Hình ảnh
-        IMAGE_TO_DEFINITION // Hình ảnh -> Định nghĩa
+        IMAGE, IMAGE_TO_DEFINITION // Hình ảnh -> Định nghĩa
     }
 
 

@@ -39,9 +39,11 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        // Khởi tạo controller để xử lý logic, ví dụ import dữ liệu JSON vào DB
         controller = new MainController(this);
         controller.importFromAssets();
 
+        // Ánh xạ các thành phần giao diện từ layout XML
         scan = findViewById(R.id.scan);
         random = findViewById(R.id.random);
         prohibition = findViewById(R.id.prohibition);
@@ -52,11 +54,13 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.nav_view);
 
+        // Vô hiệu hóa nút quét ở navigation bar (chỉ dùng FloatingActionButton)
         MenuItem scanItem = bottomNavigationView.getMenu().findItem(R.id.navigation_scan);
         if (scanItem != null) {
             scanItem.setEnabled(false);
         }
 
+        // Xử lý sự kiện khi người dùng chọn mục ở Bottom Navigation
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.navigation_scan) {
                 return false; // Không chọn item này
@@ -78,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        // Các nút chọn loại biển báo → truyền typeSign để lọc trong HomeActivity
         random.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, HomeActivity.class);
             intent.putExtra("typeSign", "all");

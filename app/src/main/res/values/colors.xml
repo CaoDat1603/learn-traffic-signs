@@ -11,4 +11,7 @@
     <color name="aqua_blue">#00B4FF</color>
     <color name="red">#FF0000</color>
     <color name="semi_transparent_black">#1A000000</color>
+    <color name="green">#4CAF50</color>
+    <color name="gray">#BDBDBD</color>
+
 </resources>

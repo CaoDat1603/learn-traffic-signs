@@ -9,13 +9,17 @@
     android:background="@drawable/backgroud_main"
     android:padding="12dp">
 
+    <!-- Thanh chọn câu hỏi -->
+
+    <!-- Tiêu đề câu hỏi -->
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="66dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints">
 
         <LinearLayout
@@ -23,45 +27,55 @@
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:gravity="center">
+
             <ImageView
                 android:layout_width="10dp"
                 android:layout_height="20dp"
-                android:background="@drawable/arrow_left">
-            </ImageView>
+                android:background="@drawable/arrow_left"></ImageView>
         </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="KIỂM TRA"
-            android:textStyle="bold"
             android:textColor="@color/white"
-            android:textSize="20dp"/>
+            android:textSize="20dp"
+            android:textStyle="bold" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_end"
             android:layout_width="120dp"
             android:layout_height="45dp"
-            android:background="@drawable/button_backroud_red"
             android:layout_marginLeft="110dp"
+            android:background="@drawable/button_backroud_red"
             android:text="NỘP BÀI"
             android:textColor="@color/white"
-            android:textStyle="bold"
             android:textSize="16dp"
+            android:textStyle="bold"
             app:backgroundTint="@null" />
     </com.google.android.material.appbar.MaterialToolbar>
 
-    <!-- Thanh chọn câu hỏi -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/question_tab_recycler"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:paddingTop="12dp"
+        android:layout_height="82dp"
         android:orientation="horizontal"
         android:paddingBottom="12dp"
-        android:scrollbars="horizontal" />
+        android:scrollbars="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+    <TextView
+        android:id="@+id/text_question_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bạn đã làm được 0/50 câu hỏi"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="8dp" />
 
-    <!-- Tiêu đề câu hỏi -->
+
     <TextView
         android:id="@+id/question_title"
         android:layout_width="wrap_content"

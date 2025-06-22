@@ -31,10 +31,14 @@ import com.example.myapplication.data.model.TrafficSign;
 import java.util.List;
 
 public class LearnActivity extends AppCompatActivity {
+    // Khai báo controller xử lý logic học
     private LearnController controller;
-    private List<TrafficSign> signList;
-    private List<TrafficSign> signListCur;
+    // Danh sách tất cả và danh sách đang học
+    private List<TrafficSign> signList;// Toàn bộ biển báo (lọc theo loại)
+    private List<TrafficSign> signListCur;// Danh sách biển báo hiện tại đang học (có thể bị cắt bớt khi tiếp tục học)
+    // Loại biển báo (truyền từ HomeActivity)
     private String type;
+    // Biến chỉ số và trạng thái học
     private int currentIndex = 0; // Hiện tại
     private int curIndexNone = 0; // Tạm
     private int curIndexNoneTow = 0; // Tạm đặt biệt (trường hợp có Đang học tiếp tục)
@@ -44,9 +48,11 @@ public class LearnActivity extends AppCompatActivity {
     private int sizeYes = 0;
     private int sizeYesCn = 0;
     private int sizeAllSign = 0;
+    // Cờ hiệu giao diện
     private boolean isImageVisible = true; // Hiện ảnh hay không
     private boolean isCheckSetting = true; // Có phải là đang ở chế độ lưu tiến trình học không
     private boolean isContinueLearn; // Có phải trường hợp tiếp tục học lại những cái đang học không
+    // Giao diện (LinearLayout, TextView, Button...)
     private LinearLayout turnBack;
     private LinearLayout allContent;
     private LinearLayout imageContent;
@@ -110,6 +116,7 @@ public class LearnActivity extends AppCompatActivity {
         buttonNar1 = findViewById(R.id.buttonNav1);
         buttonNar2 = findViewById(R.id.buttonNav2);
 
+        // Nút chuyển sang màn hình làm bài kiểm tra
         btnExam.setOnClickListener(v -> {
             Intent intent = new Intent(LearnActivity.this, ExamActivity.class);
             intent.putExtra("typeSign", type);

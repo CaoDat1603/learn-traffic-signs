@@ -1,6 +1,10 @@
 package com.example.myapplication.data.model;
 
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class QuestionData {
     private TrafficSign.QuestionType questionType;
@@ -14,37 +18,8 @@ public class QuestionData {
         this.answer = answer;
         this.options = options;
     }
-
-
-    public TrafficSign.QuestionType getQuestionType() {
-        return questionType;
-    }
-
-    public void setQuestionType(TrafficSign.QuestionType questionType) {
-        this.questionType = questionType;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
     public String getAnswer() {
         return answer;
     }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    public List<String> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<String> options) {
-        this.options = options;
-    }
 }
