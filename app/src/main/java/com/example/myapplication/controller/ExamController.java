@@ -1,6 +1,7 @@
 package com.example.myapplication.controller;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.myapplication.data.database.TrafficSignDBHelper;
 import com.example.myapplication.data.model.TrafficSign;
@@ -32,8 +33,17 @@ public class ExamController {
     public List<TrafficSign> getSignListCur(boolean isReset) {
         if (signList == null || signList.isEmpty()) return new ArrayList<>();
 
+
+        int limit = 0;
         Collections.shuffle(signList);
-        int limit = Math.min(50, signList.size()); // Lấy tối đa 50 câu hỏi
+        if (signList.size() > 69) {
+            limit = 50; // Lấy tối đa 50 câu hỏi
+        } else {
+            limit = signList.size();
+            Log.d("ExamController", "Sign list size: " + signList.size());
+        }
+
+
         return new ArrayList<>(signList.subList(0, limit));
     }
 }

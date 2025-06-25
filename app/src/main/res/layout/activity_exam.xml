@@ -68,7 +68,6 @@
         android:id="@+id/text_question_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Bạn đã làm được 0/50 câu hỏi"
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"

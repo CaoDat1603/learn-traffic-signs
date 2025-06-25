@@ -86,6 +86,7 @@ public class ExamActivity extends AppCompatActivity {
         );
 
         reloadData(true);
+        progressText.setText("Bạn đã làm được 0/" + signListCur.size() + " câu hỏi");
 
         tabAdapter = new QuestionTabAdapter(signListCur.size(), position -> {
             currentQuestionIndex = position;
@@ -174,6 +175,7 @@ public class ExamActivity extends AppCompatActivity {
                 answeredCount++;
             }
         }
+        Log.d("ExamController", "Sign list size: " + signListCur.size());
         progressText.setText("Bạn đã làm được " + answeredCount + "/" + signListCur.size() + " câu hỏi");
     }
 
@@ -199,7 +201,7 @@ public class ExamActivity extends AppCompatActivity {
         questionTitle.setText("Câu hỏi " + (index + 1));
         answerGroup.clearCheck();
 
-        // ✅ Đánh dấu lại đáp án đã chọn (nếu có)
+        // Đánh dấu lại đáp án đã chọn (nếu có)
         if (previousAnswer != null) {
             String selected = previousAnswer.getSelectedAnswer();
             if (selected != null) {
